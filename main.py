@@ -11,15 +11,15 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         mensagem = message.content.lower()
         match mensagem:
-            case '!help':
-                await message.channel.send(f'{message.author.name} os comandos são:{os.linesep}1 - ultimas noticias g1?: Mostra as últimas noticias do g1 {os.linesep}2 - ultimas noticias uol?: Mostra as últimas noticias do UOL {os.linesep}3 - dolar?: Mostra o valor atualizado do dólar{os.linesep}4 - bitcoin?: Mostra o valor atualizado do bitcoin')
-            case 'ultimas noticias g1?':
+            case '!help' | '!h' | 'help' | 'ajuda':
+                await message.channel.send(f'{message.author.name} os comandos são:{os.linesep}1 - (ultimas noticias g1?) ou (!g1): Mostra as últimas noticias do g1 {os.linesep}2 - (ultimas noticias uol?) ou (!uol): Mostra as últimas noticias do UOL{os.linesep}3 - (dolar?) ou (!USD): Mostra o valor atualizado do dólar{os.linesep}4 - (bitcoin?) ou (!BTC): Mostra o valor atualizado do bitcoin')
+            case 'ultimas noticias g1?' | '!g1':
                 await message.channel.send(ultimas_noticias_g1())
-            case 'ultimas noticias uol?':
+            case 'ultimas noticias uol?' | '!uol':
                 await message.channel.send(ultimas_noticias_uol())
-            case 'dolar?':
+            case 'dolar?' | '!usd':
                 await message.channel.send(f'R$ {get_valor_dolar_atual()}')
-            case 'bitcoin?':
+            case 'bitcoin?' | '!btc':
                 await message.channel.send(f'R$ {get_valor_btc_atual()}')
 
 
