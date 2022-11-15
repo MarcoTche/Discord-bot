@@ -1,5 +1,6 @@
 from noticias import ultimas_noticias_g1, ultimas_noticias_uol
 from valores_atualizados import get_valor_btc_atual, get_valor_dolar_atual
+from my_token import token
 import discord
 import os
 
@@ -76,6 +77,4 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = MyClient(intents=intents)
-client.run(
-    'token'
-)
+client.run(token)
