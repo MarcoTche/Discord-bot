@@ -77,5 +77,5 @@ intents.message_content = True
 
 client = MyClient(intents=intents)
 client.run(
-    'MTA0MTg4MjUwNTAzODUzMjY3OQ.GKnLqT.MCqbtCLrdI-vXy1cLPALZtTIjeJB-AG0_ozl14'
+    'token'
 )
