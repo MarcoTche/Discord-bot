@@ -3,6 +3,7 @@ from valores_atualizados import get_valor_btc_atual, get_valor_dolar_atual
 import discord
 import os
 
+
 def saudacoes(mensagem):
     lista_saudacoes = ['Oi', 'olá', 'bom dia', 'boa tarde', 'boa noite']
     for palavra in lista_saudacoes:
@@ -13,6 +14,7 @@ def saudacoes(mensagem):
 
 def verifica_g1(mensagem) -> bool:
     lista_g1 = ['últimas notícias do g1', 'ultimas noticias do g1',
+                'noticias atualizadas do g1', 'notícias atualizadas do g1'
                 'notícias g1', 'noticias g1', '!g1']
     for palavra in lista_g1:
         if palavra in mensagem:
@@ -22,6 +24,7 @@ def verifica_g1(mensagem) -> bool:
 
 def verifica_uol(mensagem) -> bool:
     lista_uol = ['últimas notícias do uol', 'ultimas noticias do uol',
+                 'noticias atualizadas do uol', 'notícias atualizadas do uol'
                  'notícias uol', 'noticias uol', '!uol']
     for palavra in lista_uol:
         if palavra in mensagem:
@@ -54,9 +57,7 @@ class MyClient(discord.Client):
         mensagem = message.content.lower()
         if message.author.name != 'AS':
             if 'help' in mensagem or 'ajuda' in mensagem:
-                await message.channel.send(f'{message.author.name} os comandos são:{os.linesep}1 - (ultimas noticias g1?) ou (!g1): Mostra as últimas noticias do g1 {os.linesep}2 - (ultimas noticias uol?) ou (!uol): Mostra as últimas noticias do UOL{os.linesep}3 - (dolar?) ou (!USD): Mostra o valor atualizado do dólar{os.linesep}4 - (bitcoin?) ou (!BTC): Mostra o valor atualizado do bitcoin')
-            elif saudacoes():
-                await message.channel.send('Olá, caso tenha dúvidas do que posso fazer, use o comando !help')
+                await message.channel.send(f'{message.author.name}, posso te oferecer algumas informações atualizadas! Como por exemplo:{os.linesep}{os.linesep}- Mostrar as últimas notícias do G1{os.linesep}- Mostra as últimas notícias do UOL{os.linesep}- Mostra o valor atualizado do dólar{os.linesep}- Mostra o valor atualizado do bitcoin{os.linesep}{os.linesep}Tente esse comando (Olá, gostaria de saber o valor atualizado do dólar!)')
             elif verifica_g1(mensagem):
                 await message.channel.send(ultimas_noticias_g1())
             elif verifica_uol(mensagem):
@@ -65,6 +66,8 @@ class MyClient(discord.Client):
                 await message.channel.send(f'R$ {get_valor_dolar_atual()}')
             elif verifica_btc(mensagem):
                 await message.channel.send(f'R$ {get_valor_btc_atual()}')
+            elif saudacoes(mensagem):
+                await message.channel.send(f'{mensagem}, caso tenha dúvidas do que posso fazer, use o comando !help')
             else:
                 await message.channel.send('Desculpe, não entendi. Veja !help')
 
