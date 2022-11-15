@@ -44,22 +44,3 @@ def ultimas_noticias_g1() -> list:
         retorno += f"{noticia}\n"
 
     return retorno
-
-
-def get_ultimas_noticias() -> str:
-    """Retorna o título das últimas notícias do G1 e do UOL em uma única string
-
-    Returns:
-        str: string com o título das últimas notícias do G1 e do UOL
-    """
-
-    retorno = "-----------------------------------NOTÍCIAS G1-----------------------------------\n"
-    for noticia in ultimas_noticias_g1():
-        retorno += f"{noticia}\n"
-
-    retorno += "\n-----------------------------------NOTÍCIAS UOL-----------------------------------\n"
-
-    for noticia in ultimas_noticias_uol():
-        retorno += f"{noticia}\n"
-
-    return retorno
