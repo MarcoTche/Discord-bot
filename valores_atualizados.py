@@ -1,4 +1,5 @@
 import requests
+import locale
 
 
 def get_valor_btc_atual() -> float:
@@ -14,8 +15,9 @@ def get_valor_btc_atual() -> float:
 
     if response.status_code == 200:
         valor_btc = response.json()
-        valor = str(round(float(valor_btc["BTCBRL"]["bid"]) * 1000, 2))
-        return valor.replace('.', ',')
+        valor = round(float(valor_btc["BTCBRL"]["bid"]) * 1000, 2)
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+        return locale.currency(valor, grouping=True, symbol=None)
 
     raise Exception(
         "Ocorreu um erro inesperado!!! Status Code: {}".format(
@@ -36,8 +38,9 @@ def get_valor_dolar_atual() -> float:
 
     if response.status_code == 200:
         valor_btc = response.json()
-        valor = str(round(float(valor_btc["USDBRL"]["bid"]), 2))
-        return valor.replace('.', ',')
+        valor = round(float(valor_btc["USDBRL"]["bid"]), 2)
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+        return locale.currency(valor, grouping=True, symbol=None)
 
     raise Exception(
         "Ocorreu um erro inesperado!!! Status Code: {}".format(
