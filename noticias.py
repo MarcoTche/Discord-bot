@@ -49,3 +49,4 @@ def ultimas_noticias_g1() -> list:
         return retorno
     except:
         return "Houve um erro ao buscar a notícia"
+breakpoint()
