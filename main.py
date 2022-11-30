@@ -142,15 +142,15 @@ class MyClient(discord.Client):
                 await message.channel.send(f'''
 {message.author.name}, posso te oferecer algumas informações atualizadas! Como por exemplo:     
 
-- Mostrar o título das últimas notícias do G1 (use --link para obter o link das notícias)
-- Mostrar o título das últimas notícias do UOL (use --link para obter o link das notícias)
+- Mostrar o título das últimas notícias do G1 (use link para obter o link das notícias)
+- Mostrar o título das últimas notícias do UOL (use link para obter o link das notícias)
 - Mostrar o valor atualizado do dólar 
 - Mostrar o valor atualizado do bitcoin     
 
 
 Exemplos: 
     Olá, gostaria de saber o valor atualizado do dólar!
-    Olá, gostaria de saber quais são as últimas notícias do UOL! --link
+    Olá, gostaria de saber quais são as últimas notícias do UOL com link!
 ''')
 
             if verifica_g1_com_link(mensagem):
