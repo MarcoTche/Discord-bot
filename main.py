@@ -30,7 +30,7 @@ def verifica_saudacoes(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma saudação.
     """
 
-    lista_saudacoes = [r'\boi.', r'\bolá.', 'bom dia', 'boa tarde', 'boa noite']
+    lista_saudacoes = [r'\boi.?', r'\bolá.?', 'bom dia', 'boa tarde', 'boa noite']
     verifica = re.search('|'.join(lista_saudacoes), mensagem)
 
     return verifica != None
