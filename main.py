@@ -2,6 +2,7 @@ from noticias import ultimas_noticias_g1, ultimas_noticias_uol, ultimas_noticias
 from valores_atualizados import get_valor_btc_atual, get_valor_dolar_atual
 from my_token import token
 import discord
+import re
 
 
 def verifica_ajuda(mensagem: str) -> bool:
@@ -13,13 +14,10 @@ def verifica_ajuda(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de ajuda.
     """
-    mensagem = mensagem.split(' ')
-    lista_ajuda = ['ajuda', 'help', '!help', ]
+    lista_ajuda = ['ajuda', 'help', '!help']
+    verifica = re.search('|'.join(lista_ajuda), mensagem)
 
-    for palavra in lista_ajuda:
-        if palavra in mensagem:
-            return True
-    return False
+    return verifica != None
 
 
 def verifica_saudacoes(mensagem: str) -> bool:
@@ -32,13 +30,10 @@ def verifica_saudacoes(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma saudação.
     """
 
-    mensagem = mensagem.split(' ')
-    lista_saudacoes = ['oi', 'olá', 'bom dia', 'boa tarde', 'boa noite']
+    lista_saudacoes = [r'\boi.', r'\bolá.', 'bom dia', 'boa tarde', 'boa noite']
+    verifica = re.search('|'.join(lista_saudacoes), mensagem)
 
-    for palavra in lista_saudacoes:
-        if palavra in mensagem:
-            return True
-    return False
+    return verifica != None
 
 
 def verifica_g1(mensagem: str) -> bool:
@@ -51,10 +46,8 @@ def verifica_g1(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1.
     """
 
-    mensagem = mensagem.split(' ')
-    if 'g1' in mensagem:
-        return True
-    return False
+    verifica = re.search(r'\bg1.', mensagem)
+    return verifica != None
 
 
 def verifica_g1_com_link(mensagem: str) -> bool:
@@ -67,9 +60,8 @@ def verifica_g1_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1 com links.
     """
 
-    if 'link' in mensagem and verifica_g1(mensagem):
-        return True
-    return False
+    verifica = re.search(r'\blink.', mensagem)
+    return verifica != None and verifica_g1
 
 
 def verifica_uol(mensagem: str) -> bool:
@@ -82,10 +74,8 @@ def verifica_uol(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL.
     """
 
-    mensagem = mensagem.split(' ')
-    if 'uol' in mensagem:
-        return True
-    return False
+    verifica = re.search(r'\buol.', mensagem)
+    return verifica != None
 
 
 def verifica_uol_com_link(mensagem: str) -> bool:
@@ -98,9 +88,8 @@ def verifica_uol_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL com links.
     """
 
-    if 'link' in mensagem and verifica_uol(mensagem):
-        return True
-    return False
+    verifica = re.search(r'\blink.', mensagem)
+    return verifica != None and verifica_uol
 
 
 def verifica_btc(mensagem: str) -> bool:
@@ -113,13 +102,10 @@ def verifica_btc(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do bitcoin.
     """
 
-    mensagem = mensagem.split(' ')
     lista_btc = ['bitcoin', 'btc']
+    verifica = re.search('|'.join(lista_btc), mensagem)
 
-    for palavra in lista_btc:
-        if palavra in mensagem:
-            return True
-    return False
+    return verifica != None
 
 
 def verifica_dolar(mensagem: str) -> bool:
@@ -132,13 +118,10 @@ def verifica_dolar(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do dólar.
     """
 
-    mensagem = mensagem.split(' ')
     lista_btc = ['dolar', 'dólar', 'usd']
+    verifica = re.search('|'.join(lista_btc), mensagem)
 
-    for palavra in lista_btc:
-        if palavra in mensagem:
-            return True
-    return False
+    return verifica != None
 
 
 class MyClient(discord.Client):
@@ -150,8 +133,12 @@ class MyClient(discord.Client):
         mensagem = message.content.lower()
 
         if message.author.name != 'AS':  # caso a mensagem lida não seja do próprio bot
+            flagMensagem = False
+            flagSaudacao = False
 
             if verifica_ajuda(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
                 await message.channel.send(f'''
 {message.author.name}, posso te oferecer algumas informações atualizadas! Como por exemplo:     
 
@@ -166,7 +153,9 @@ Exemplos:
     Olá, gostaria de saber quais são as últimas notícias do UOL! --link
 ''')
 
-            elif verifica_g1_com_link(mensagem):
+            if verifica_g1_com_link(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
                 noticias = ultimas_noticias_g1_com_link()
                 for i in noticias.split('\n'):
                     if i:
@@ -175,9 +164,13 @@ Exemplos:
                         await message.channel.send('‎ \n')
 
             elif verifica_g1(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
                 await message.channel.send(ultimas_noticias_g1())
 
-            elif verifica_uol_com_link(mensagem):
+            if verifica_uol_com_link(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
                 noticias = ultimas_noticias_uol_com_link()
                 for i in noticias.split('\n'):
                     if i:
@@ -186,19 +179,26 @@ Exemplos:
                         await message.channel.send('‎ \n')
 
             elif verifica_uol(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
                 await message.channel.send(ultimas_noticias_uol())
 
-            elif verifica_dolar(mensagem):
-                await message.channel.send(f'R$ {get_valor_dolar_atual()}')
+            if verifica_dolar(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
+                await message.channel.send(f'\nCotação do Dólar: R$ {get_valor_dolar_atual()}')
 
-            elif verifica_btc(mensagem):
-                await message.channel.send(f'R$ {get_valor_btc_atual()}')
+            if verifica_btc(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
+                await message.channel.send(f'\nCotação do Bitcoin: R$ {get_valor_btc_atual()}')
 
-            elif verifica_saudacoes(mensagem):
-                await message.channel.send(f'{mensagem}, caso tenha dúvidas do que posso fazer, use o comando !help')
+            if not flagSaudacao and verifica_saudacoes(mensagem):
+                flagMensagem = True
+                await message.channel.send(f'\n{message.author.name}, caso tenha dúvidas do que posso fazer, digite ajuda')
 
-            else:
-                await message.channel.send('Desculpe, não entendi. Veja !help')
+            if not flagMensagem:
+                await message.channel.send('\nDesculpe, não entendi. Digite ajuda e veja como posso te ajudar')
 
 
 intents = discord.Intents.default()
