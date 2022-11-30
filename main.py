@@ -2,10 +2,27 @@ from noticias import ultimas_noticias_g1, ultimas_noticias_uol, ultimas_noticias
 from valores_atualizados import get_valor_btc_atual, get_valor_dolar_atual
 from my_token import token
 import discord
-import os
 
 
-def saudacoes(mensagem: str) -> bool:
+def verifica_ajuda(mensagem: str) -> bool:
+    """função usada para verificar se a mensagem passada como argumento contém algum elemento da lista, ou seja, alguma solicitação de ajuda.
+
+    Args:
+        mensagem (str): mensagem captada pelo bot.
+
+    Returns:
+        bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de ajuda.
+    """
+    mensagem = mensagem.split(' ')
+    lista_ajuda = ['ajuda', 'help', '!help', ]
+
+    for palavra in lista_ajuda:
+        if palavra in mensagem:
+            return True
+    return False
+
+
+def verifica_saudacoes(mensagem: str) -> bool:
     """função usada para verificar se a mensagem passada como argumento contém algum elemento da lista, ou seja, alguma saudação/cumprimento.
 
     Args:
@@ -14,9 +31,12 @@ def saudacoes(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma saudação.
     """
+
+    mensagem = mensagem.split(' ')
     lista_saudacoes = ['oi', 'olá', 'bom dia', 'boa tarde', 'boa noite']
+
     for palavra in lista_saudacoes:
-        if palavra in mensagem.lower():
+        if palavra in mensagem:
             return True
     return False
 
@@ -30,12 +50,10 @@ def verifica_g1(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1.
     """
-    lista_g1 = ['últimas notícias do g1', 'ultimas noticias do g1',
-                'noticias atualizadas do g1', 'notícias atualizadas do g1'
-                'notícias g1', 'noticias g1', '!g1']
-    for palavra in lista_g1:
-        if palavra in mensagem.lower():
-            return True
+
+    mensagem = mensagem.split(' ')
+    if 'g1' in mensagem:
+        return True
     return False
 
 
@@ -49,7 +67,7 @@ def verifica_g1_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1 com links.
     """
 
-    if '--link' in mensagem and verifica_g1(mensagem):
+    if 'link' in mensagem and verifica_g1(mensagem):
         return True
     return False
 
@@ -63,12 +81,10 @@ def verifica_uol(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL.
     """
-    lista_uol = ['últimas notícias do uol', 'ultimas noticias do uol',
-                 'noticias atualizadas do uol', 'notícias atualizadas do uol'
-                 'notícias uol', 'noticias uol', '!uol']
-    for palavra in lista_uol:
-        if palavra in mensagem.lower():
-            return True
+
+    mensagem = mensagem.split(' ')
+    if 'uol' in mensagem:
+        return True
     return False
 
 
@@ -82,7 +98,7 @@ def verifica_uol_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL com links.
     """
 
-    if '--link' in mensagem and verifica_uol(mensagem):
+    if 'link' in mensagem and verifica_uol(mensagem):
         return True
     return False
 
@@ -96,9 +112,12 @@ def verifica_btc(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do bitcoin.
     """
-    lista_btc = ['bitcoin', '!btc']
+
+    mensagem = mensagem.split(' ')
+    lista_btc = ['bitcoin', 'btc']
+
     for palavra in lista_btc:
-        if palavra in mensagem.lower():
+        if palavra in mensagem:
             return True
     return False
 
@@ -112,9 +131,12 @@ def verifica_dolar(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do dólar.
     """
-    lista_btc = ['dolar', 'dólar', '!usd']
+
+    mensagem = mensagem.split(' ')
+    lista_btc = ['dolar', 'dólar', 'usd']
+
     for palavra in lista_btc:
-        if palavra in mensagem.lower():
+        if palavra in mensagem:
             return True
     return False
 
@@ -128,12 +150,13 @@ class MyClient(discord.Client):
         mensagem = message.content.lower()
 
         if message.author.name != 'AS':  # caso a mensagem lida não seja do próprio bot
-            if 'help' in mensagem or 'ajuda' in mensagem:
+
+            if verifica_ajuda(mensagem):
                 await message.channel.send(f'''
 {message.author.name}, posso te oferecer algumas informações atualizadas! Como por exemplo:     
 
-- Mostrar o título das últimas notícias do G1 (--link para obter o link das notícias)
-- Mostrar o título das últimas notícias do UOL (--link para obter o link das notícias)
+- Mostrar o título das últimas notícias do G1 (use --link para obter o link das notícias)
+- Mostrar o título das últimas notícias do UOL (use --link para obter o link das notícias)
 - Mostrar o valor atualizado do dólar 
 - Mostrar o valor atualizado do bitcoin     
 
@@ -171,7 +194,7 @@ Exemplos:
             elif verifica_btc(mensagem):
                 await message.channel.send(f'R$ {get_valor_btc_atual()}')
 
-            elif saudacoes(mensagem):
+            elif verifica_saudacoes(mensagem):
                 await message.channel.send(f'{mensagem}, caso tenha dúvidas do que posso fazer, use o comando !help')
 
             else:
