@@ -223,15 +223,15 @@ Exemplos:
             if verifica_dolar(mensagem):
                 flagMensagem = True
                 flagSaudacao = True
-                await message.channel.send(f'\nCotação do Dólar: R$ {get_valor_dolar_atual()}')
+                await message.channel.send(f'\n\nCotação do Dólar: R$ {get_valor_dolar_atual()}')
 
             if verifica_btc(mensagem):
                 flagMensagem = True
                 flagSaudacao = True
-                await message.channel.send(f'\nCotação do Bitcoin: R$ {get_valor_btc_atual()}')
+                await message.channel.send(f'\n\nCotação do Bitcoin: R$ {get_valor_btc_atual()}')
 
-            saudacao = verifica_saudacoes(mensagem)[0].capitalize().replace(',', '')
-            if not flagSaudacao and saudacao:
+            if not flagSaudacao and verifica_saudacoes(mensagem):
+                saudacao = verifica_saudacoes(mensagem)[0].capitalize().replace(',', '')
                 flagMensagem = True
 
                 await message.channel.send(f'\n{saudacao}, {message.author.name}! Caso tenha dúvidas do que posso fazer, digite ajuda')
