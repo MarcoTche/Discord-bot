@@ -14,26 +14,31 @@ def verifica_ajuda(mensagem: str) -> bool:
     Returns:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de ajuda.
     """
-    lista_ajuda = ['ajuda', 'help', '!help']
-    verifica = re.search('|'.join(lista_ajuda), mensagem)
+    mensagem = mensagem.split(' ')
+    lista_ajuda = ['ajuda', 'ajudar', 'help', ]
 
-    return verifica != None
+    for palavra in lista_ajuda:
+        if palavra in mensagem:
+            return True
+    return False
 
 
-def verifica_saudacoes(mensagem: str) -> bool:
+def verifica_saudacoes(mensagem: str) -> re.Match:
     """função usada para verificar se a mensagem passada como argumento contém algum elemento da lista, ou seja, alguma saudação/cumprimento.
 
     Args:
         mensagem (str): mensagem captada pelo bot.
 
     Returns:
-        bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma saudação.
+        re.Match: retorna o Match do regex.
     """
 
-    lista_saudacoes = [r'\boi.?', r'\bolá.?', 'bom dia', 'boa tarde', 'boa noite']
+    lista_saudacoes = [
+        r'\boi.?', r'\bolá.?', r'\bola.?', 'bom dia', 'boa tarde', 'boa noite'
+    ]
     verifica = re.search('|'.join(lista_saudacoes), mensagem)
 
-    return verifica != None
+    return verifica
 
 
 def verifica_g1(mensagem: str) -> bool:
@@ -46,8 +51,10 @@ def verifica_g1(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1.
     """
 
-    verifica = re.search(r'\bg1.', mensagem)
-    return verifica != None
+    mensagem = mensagem.split(' ')
+    if 'g1' in mensagem:
+        return True
+    return False
 
 
 def verifica_g1_com_link(mensagem: str) -> bool:
@@ -60,8 +67,9 @@ def verifica_g1_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do G1 com links.
     """
 
-    verifica = re.search(r'\blink.', mensagem)
-    return verifica != None and verifica_g1
+    if 'link' in mensagem and verifica_g1(mensagem):
+        return True
+    return False
 
 
 def verifica_uol(mensagem: str) -> bool:
@@ -74,8 +82,10 @@ def verifica_uol(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL.
     """
 
-    verifica = re.search(r'\buol.', mensagem)
-    return verifica != None
+    mensagem = mensagem.split(' ')
+    if 'uol' in mensagem:
+        return True
+    return False
 
 
 def verifica_uol_com_link(mensagem: str) -> bool:
@@ -88,8 +98,9 @@ def verifica_uol_com_link(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de noticias do UOL com links.
     """
 
-    verifica = re.search(r'\blink.', mensagem)
-    return verifica != None and verifica_uol
+    if 'link' in mensagem and verifica_uol(mensagem):
+        return True
+    return False
 
 
 def verifica_btc(mensagem: str) -> bool:
@@ -102,10 +113,13 @@ def verifica_btc(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do bitcoin.
     """
 
+    mensagem = mensagem.split(' ')
     lista_btc = ['bitcoin', 'btc']
-    verifica = re.search('|'.join(lista_btc), mensagem)
 
-    return verifica != None
+    for palavra in lista_btc:
+        if palavra in mensagem:
+            return True
+    return False
 
 
 def verifica_dolar(mensagem: str) -> bool:
@@ -118,10 +132,26 @@ def verifica_dolar(mensagem: str) -> bool:
         bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação do valor atual do dólar.
     """
 
+    mensagem = mensagem.split(' ')
     lista_btc = ['dolar', 'dólar', 'usd']
-    verifica = re.search('|'.join(lista_btc), mensagem)
 
-    return verifica != None
+    for palavra in lista_btc:
+        if palavra in mensagem:
+            return True
+    return False
+
+
+def verifica_limpar(mensagem: str) -> bool:
+    """função usada para verificar se a mensagem passada como argumento está solicitando a limpeza do chat.
+
+    Args:
+        mensagem (str): mensagem captada pelo bot.
+
+    Returns:
+        bool: retorna verdadeiro se a mensagem passada pelo usuário conter alguma solicitação de limpeza do chat.
+    """
+
+    return '!clear' in mensagem.split(' ')
 
 
 class MyClient(discord.Client):
@@ -132,7 +162,8 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         mensagem = message.content.lower()
 
-        if message.author.name != 'AS':  # caso a mensagem lida não seja do próprio bot
+        # caso a mensagem lida não seja do próprio bot
+        if message.author.name != 'AS':
             flagMensagem = False
             flagSaudacao = False
 
@@ -162,6 +193,12 @@ Exemplos:
                         await message.channel.send(i)
                     else:
                         await message.channel.send('‎ \n')
+
+            elif verifica_limpar(mensagem):
+                flagMensagem = True
+                flagSaudacao = True
+
+                await message.channel.send('‎ \n'*50)
 
             elif verifica_g1(mensagem):
                 flagMensagem = True
@@ -193,9 +230,11 @@ Exemplos:
                 flagSaudacao = True
                 await message.channel.send(f'\nCotação do Bitcoin: R$ {get_valor_btc_atual()}')
 
-            if not flagSaudacao and verifica_saudacoes(mensagem):
+            saudacao = verifica_saudacoes(mensagem)[0].capitalize().replace(',', '')
+            if not flagSaudacao and saudacao:
                 flagMensagem = True
-                await message.channel.send(f'\n{message.author.name}, caso tenha dúvidas do que posso fazer, digite ajuda')
+
+                await message.channel.send(f'\n{saudacao}, {message.author.name}! Caso tenha dúvidas do que posso fazer, digite ajuda')
 
             if not flagMensagem:
                 await message.channel.send('\nDesculpe, não entendi. Digite ajuda e veja como posso te ajudar')
