@@ -34,20 +34,18 @@ Defina o token solicitado pelo arquivo main.py
   Após, substitua a string 'token' da variável para uma string com o seu token
 ```
 
-[Link de auxílio para criação do seu próprio token]('https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token/')
+[Link de auxílio para criação do seu próprio token](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token/)
 
 ## Uso
 
 Inicialize o bot:
 
 ```console
-python main.py
- > verifique se o bot ficou online no servidor 
+rode o arquivo main.py:
+  python main.py
+    > verifique se o bot ficou online no servidor 
 ```
 
-Comandos implementados:
+## Aproveite :)
 
-```console
-'!help' ou 'ajuda' - Bot vai retornar algumas funcionalidades que ele entende
-...
-```
+### [Slide apresentando algumas de suas funcionalidades](https://docs.google.com/presentation/d/1BCnjZZb2_xSJ3OAnVEWwPg7veuWVECgT/edit?usp=sharing&ouid=106291756881515775415&rtpof=true&sd=true)
